@@ -4,6 +4,7 @@
 
 # PEP-8: Manual de Estilo de Código de Python
 
+from sqlalchemy import table
 from sqlmodel import SQLModel, Field
 
 
@@ -18,3 +19,10 @@ class Clube(ClubeBase, table=True):
 
 class RequestClube(ClubeBase):
   pass
+
+
+class Jogador(SQLModel, table=True):
+  id: int | None = Field(default=None, primary_key=True)
+  nome: str
+  posicao: str
+  numero: int

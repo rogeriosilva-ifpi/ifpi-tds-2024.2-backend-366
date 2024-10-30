@@ -5,7 +5,6 @@ from src.models import Clube, RequestClube
 from sqlmodel import Session, select
 
 
-
 router = APIRouter()
 
 
