@@ -4,7 +4,6 @@
 
 # PEP-8: Manual de Estilo de Código de Python
 
-from sqlalchemy import table
 from sqlmodel import SQLModel, Field
 
 
