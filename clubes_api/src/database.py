@@ -13,3 +13,4 @@ def get_engine():
   port = config('PORT')
   # Montar a URL para conexão
   return create_engine(f'postgresql://{user}:{password}@{host}:{port}/{db_name}')
+  # return create_engine('sqlite:///banco_livros.db')

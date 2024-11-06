@@ -1,3 +1,4 @@
+from tkinter.messagebox import NO
 from fastapi import APIRouter, status, HTTPException
 
 from src.database import get_engine
@@ -9,13 +10,16 @@ router = APIRouter()
 
 
 @router.get('', status_code=status.HTTP_200_OK)
-def lista_clubes(serie: str | None = None):
+def lista_clubes(serie: str | None = None, uf: str | None = None):
   session = Session(get_engine())
   
   statement = select(Clube)
   
   if serie:
     statement = statement.where(Clube.serie == serie)
+
+  if uf:
+    statement = statement.where(Clube.uf == uf) 
 
   clubes = session.exec(statement).all()
 
