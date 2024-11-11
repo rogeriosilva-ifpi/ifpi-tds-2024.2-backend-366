@@ -1,5 +1,7 @@
 from tkinter.messagebox import NO
+from certifi import where
 from fastapi import APIRouter, status, HTTPException
+from httpx import delete
 
 from src.database import get_engine
 from src.models import Clube, RequestClube
@@ -28,10 +30,12 @@ def lista_clubes(serie: str | None = None, uf: str | None = None):
 
 @router.get('/{clube_id}')
 def detalhes_clube(clube_id: int):
-  for clube in clubes_futebol:
-    if clube.id == clube_id:
+  with Session(get_engine()) as session:
+    sttm = select(Clube).where(Clube.id == clube_id)
+    clube = session.exec(sttm).one_or_none()
+    if clube:
       return clube
-  
+
   # nao localizou
   raise HTTPException(
     status_code=status.HTTP_404_NOT_FOUND,
@@ -55,9 +59,16 @@ def criar_clube(request_clube: RequestClube):
 
 @router.put('/{clube_id}')
 def alterar_clube(clube_id: int, dados: RequestClube):
-  for clube in clubes_futebol:
-    if clube.id == clube_id:
+  with Session(get_engine()) as session:
+    sttm = select(Clube).where(Clube.id == clube_id)
+    clube = session.exec(sttm).one_or_none()
+    
+    if clube:
       clube.nome = dados.nome
+      clube.serie = dados.serie
+      session.add(clube)
+      session.commit()
+      session.refresh(clube)
       return clube
   
   raise HTTPException(
@@ -67,9 +78,12 @@ def alterar_clube(clube_id: int, dados: RequestClube):
 
 @router.delete('/{clube_id}', status_code=status.HTTP_204_NO_CONTENT)
 def remover_clube(clube_id: int):
-  for clube in clubes_futebol:
-    if clube_id == clube.id:
-      clubes_futebol.remove(clube)
+  with Session(get_engine()) as session:
+    sttm = select(Clube).where(Clube.id == clube_id) 
+    clube = session.exec(sttm).one_or_none()
+    if clube:
+      session.delete(clube)
+      session.commit()
       return
 
   raise HTTPException(
