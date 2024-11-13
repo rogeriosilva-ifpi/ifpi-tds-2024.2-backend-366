@@ -1,8 +1,4 @@
-from tkinter.messagebox import NO
-from certifi import where
 from fastapi import APIRouter, status, HTTPException
-from httpx import delete
-
 from src.database import get_engine
 from src.models import Clube, RequestClube
 from sqlmodel import Session, select
