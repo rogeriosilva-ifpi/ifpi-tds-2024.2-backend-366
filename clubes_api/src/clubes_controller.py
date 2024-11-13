@@ -86,3 +86,8 @@ def remover_clube(clube_id: int):
     status_code=status.HTTP_404_NOT_FOUND,
     detail=f'Clube não localizado com id = {clube_id}'
   )
+
+
+@router.get('/{clube_id}/jogadores')
+def jogadores_clube(clube_id: int):
+  return []
