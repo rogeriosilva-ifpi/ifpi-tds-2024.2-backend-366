@@ -2,7 +2,7 @@ from sqlmodel import create_engine, SQLModel
 
 
 def get_engine():
-  return create_engine('sqlite:///tasks.db')
+  return create_engine('sqlite:///tarefas.db')
 
 
 def init_db():
