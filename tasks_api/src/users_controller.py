@@ -1,11 +1,20 @@
-from fastapi import APIRouter, HTTPException, status
+from datetime import datetime, timedelta, timezone
+from typing import Annotated
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session, select
 
+from src.auth_utils import get_logged_user
 from src.database import get_engine
 from src.models import BaseUser, SignInUserRequest, SignUpUserRequest, User
 from passlib.context import CryptContext
+import jwt
 
 router = APIRouter()
+
+SECRET_KEY = '02a7e6efa2d0f77fc89f1f44d73acd7bf26e5dc6f3c1f939ff5d038ea3604f23'
+ALGORITHM = 'HS256'
+ACCESS_TOKEN_EXPIRE_MINUTES = 10
+REFRESH_TOKEN_EXPIRE_MINUTES = 60 * 24 * 3 # Vale 3 dias
 
 @router.post('/signup', response_model=BaseUser)
 def signup(user_data: SignUpUserRequest):
@@ -33,12 +42,13 @@ def signup(user_data: SignUpUserRequest):
 def signin(signin_data: SignInUserRequest):
   with Session(get_engine()) as session:
     # pegar usuário por username
+    
     sttm = select(User).where(User.username == signin_data.username)
     user = session.exec(sttm).first()
     print('1: ', user)
     if not user: # não encontrou usuário
       raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, 
-        detail='Usuário e/ou senha incorrento(S)')
+        detail='Usuário e/ou senha incorreto(S)')
     
     # encontrou, então verificar a senha
     pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -49,7 +59,18 @@ def signin(signin_data: SignInUserRequest):
       raise HTTPException(
         status_code=status.HTTP_400_BAD_REQUEST, 
         detail='Usuário e/ou senha incorrento(S)')
+    
+    # Tá tudo OK pode gerar um Token JWT e devolver
+    expires_at = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = jwt.encode({'sub': user.username, 'exp': expires_at}, key=SECRET_KEY, algorithm=ALGORITHM)
 
-    return {'Token': 'Esse é seu crachá'}
+    expires_rt = datetime.now(timezone.utc) + timedelta(minutes=REFRESH_TOKEN_EXPIRE_MINUTES)
+    refresh_token = jwt.encode({'sub': user.username, 'exp': expires_rt}, key=SECRET_KEY, algorithm=ALGORITHM)
 
 
+    return {'access_token': access_token, 'refresh_token': refresh_token}
+
+
+@router.get('/me', response_model=BaseUser)
+def me(user: Annotated[User, Depends(get_logged_user)]):
+  return user
