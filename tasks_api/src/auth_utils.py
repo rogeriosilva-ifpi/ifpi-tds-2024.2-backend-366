@@ -19,7 +19,11 @@ async def get_logged_user(token: Annotated[str, Depends(oauth2_scheme)]):
   # pegará o usuário no BD para confirmar e retornar ele
   exception = HTTPException(status_code=401, detail='Não autorizado!')
 
-  payload = jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
+  try:
+    payload = jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
+  except:
+    raise exception
+  
   username = payload.get('sub')
 
   if not username: 
