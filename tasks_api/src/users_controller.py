@@ -12,6 +12,16 @@ router = APIRouter()
 
 @router.post('/signup', response_model=BaseUser)
 def signup(user_data: SignUpUserRequest):
+
+  with Session(get_engine()) as session:
+    # pegar usuário por username
+    sttm = select(User).where(User.username == user_data.username)
+    user = session.exec(sttm).first()
+    
+    if user:
+      raise HTTPException(status_code=400, detail='Já existe um usuário com esse username')
+
+
   if user_data.password != user_data.confirm_password:
     raise HTTPException(
       status_code=status.HTTP_400_BAD_REQUEST,
