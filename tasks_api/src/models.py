@@ -7,6 +7,7 @@ class BaseTask(SQLModel):
   title: str
   description: str
   done: bool
+  # Mudar para Datetime
   created_at: str = Field(default=datetime.datetime.now().strftime('%Y-%m-%d'))
   due_date: date
 
