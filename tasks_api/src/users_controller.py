@@ -65,6 +65,6 @@ def signin(signin_data: SignInUserRequest):
     return {'access_token': access_token, 'refresh_token': refresh_token}
 
 
-@router.get('/me', response_model=BaseUser)
+@router.get('/me', response_model=User)
 def me(user: Annotated[User, Depends(get_logged_user)]):
   return user
