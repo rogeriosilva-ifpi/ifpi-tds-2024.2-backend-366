@@ -7,7 +7,6 @@ class BaseUser(SQLModel):
   email: str
   username: str
 
-  
 
 class User(BaseUser, table=True):
   id: int = Field(default=None, primary_key=True)
@@ -43,7 +42,9 @@ class Task(BaseTask, table=True):
   id: int = Field(default=None, primary_key=True)
   user: User | None = Relationship(back_populates="tasks")
 
-  
+
+class TaskPublic(BaseTask):
+  user: BaseUser | None
 
 
 class CreateTaskRequest(BaseTask):

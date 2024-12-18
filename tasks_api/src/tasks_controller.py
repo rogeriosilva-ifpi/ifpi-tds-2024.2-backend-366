@@ -1,9 +1,10 @@
+from encodings.punycode import selective_len
 from typing import Annotated
 from sqlmodel import Session, select
 
 from src.auth_utils import get_logged_user
 from src.database import get_engine
-from .models import CreateTaskRequest, Task, User
+from .models import CreateTaskRequest, Task, TaskPublic, User
 from fastapi import APIRouter, Depends, HTTPException, status, Response
 
 
@@ -40,7 +41,7 @@ def task_delete(task_id: int):
     return Response(status_code=status.HTTP_204_NO_CONTENT)
   
 
-@router.get('/tasks')
+@router.get('/tasks', response_model=list[TaskPublic])
 def task_list(user: Annotated[User, Depends(get_logged_user)]):
   session = Session(get_engine())
   sttm = select(Task).where(Task.user_id == user.id)
