@@ -56,9 +56,9 @@ class Membro(models.Model):
 
 class Tarefa(models.Model):
     nome = models.CharField(max_length=100)
-    descricao = models.TextField('Descrição', max_length=500)
+    descricao = models.TextField('Descrição', max_length=500, null=True, blank=True)
     data_inicio = models.DateField('Data de Início')
-    data_fim = models.DateField('Data de Fim')
+    data_fim = models.DateField('Data de Fim', null=True, blank=True)
     horas_estimadas = models.DecimalField('Horas Estimadas', max_digits=5, decimal_places=2)
 
     projeto = models.ForeignKey('Projeto', 
