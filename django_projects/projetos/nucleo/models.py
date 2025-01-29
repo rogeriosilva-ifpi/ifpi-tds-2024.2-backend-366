@@ -35,8 +35,6 @@ SEXO_CHOICES = (('M', 'Masculino'), ('F', 'Feminino'), ('O', 'Outro'))
 class Membro(models.Model):
     nome = models.CharField(max_length=100)
     sexo = models.CharField(max_length=1, default='O', choices=SEXO_CHOICES)
-    telefone = models.CharField(max_length=15, help_text='(99) 99999-9999')
-
     telefone = models.CharField(
       max_length=15, 
       help_text='(99) 99999-9999',
