@@ -1,7 +1,13 @@
 from dataclasses import fields
 from pyexpat import model
 from rest_framework import serializers
-from nucleo.models import Projeto, Equipe
+from nucleo.models import Projeto, Equipe, Comentario
+
+
+class ComentarioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comentario
+        fields = '__all__'
 
 
 class EquipeSerializer(serializers.ModelSerializer):
@@ -32,6 +38,6 @@ class ProjetoSerializer(serializers.ModelSerializer):
 class ProjetoCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Projeto
-        fields = ['id', 'nome', 'data_inicio', 'data_fim', 
-                  'orcamento']
+        fields = ['id', 'nome', 'data_inicio', 
+                  'data_fim', 'orcamento']
         

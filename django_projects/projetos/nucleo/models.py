@@ -81,4 +81,14 @@ class Tarefa(models.Model):
 
     def __str__(self):
         return self.nome
+    
+
+class Comentario(models.Model):
+    texto = models.TextField('Comentário', max_length=500)
+    criado_em = models.DateTimeField('Data Criação', auto_now_add=True)
+    atualizado_em = models.DateTimeField('Última atualização', auto_now=True)
+
+  
+    def __str__(self):
+        return f'{self.texto} ({self.atualizado_em})'
   
